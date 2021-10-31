@@ -1,3 +1,5 @@
+// https://leetcode-cn.com/problems/binary-tree-longest-consecutive-sequence/**
+
 /**
  * Definition for a binary tree node.
  * function TreeNode(val, left, right) {
@@ -10,9 +12,6 @@
  * @param {TreeNode} root
  * @return {number}
  */
-
-// https://leetcode-cn.com/problems/binary-tree-longest-consecutive-sequence/
-
 // var longestConsecutive = function(root) {
 //   let res = [0];
 //   helper(root, root.val, 0, res);
@@ -78,23 +77,23 @@ var longestConsecutive = function(root) {
       if (node.left && node.left.val === node.val + 1) {
         if (node.right) {
           queue.push(node.right);
-          node = node.left;
         }
+        node = node.left;
       }
       else if (node.right && node.right.val === node.val + 1) {
         if (node.left) {
           queue.push(node.left);
-          node = node.right;
         }
+        node = node.right;
       }
       len++;
     }
-    // if (node.left) {
-    //   queue.push(node.left);
-    // }
-    // if (node.right) {
-    //   queue.push(node.right);
-    // }
+    if (node.left) {
+      queue.push(node.left);
+    }
+    if (node.right) {
+      queue.push(node.right);
+    }
     res = Math.max(res, len);
   }
 
