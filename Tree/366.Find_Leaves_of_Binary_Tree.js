@@ -6,34 +6,54 @@
  *     this.right = (right===undefined ? null : right)
  * }
  */
-
-// https://leetcode-cn.com/problems/find-leaves-of-binary-tree/
-
 /**
  * @param {TreeNode} root
  * @return {number[][]}
  */
- var findLeaves = function(root) {
-  res = []
-  while (root) {
-    let leaves = [];
-    root = remove(root, leaves);
-    res.push(leaves);
-  }
+ 
+ // O(n!) O(n)
 
+ // https://leetcode-cn.com/problems/find-leaves-of-binary-tree/
+
+// var findLeaves = function(root) {
+//   res = []
+//   while (root) {
+//     let leaves = [];
+//     root = remove(root, leaves);
+//     res.push(leaves);
+//   }
+
+//   return res;
+// };
+
+// var remove = (node, leaves) => {
+//   if (!node) {
+//     return null;
+//   }
+//   if (!node.left && !node.right) {
+//     leaves.push(node.val);
+//     return null;
+//   }
+//   node.left = remove(node.left, leaves);
+//   node.right = remove(node.right, leaves);
+
+//   return node;
+// }
+
+var findLeaves = function(root) {
+  let res = [];
+  helper(root, res);
   return res;
-};
+}
 
-var remove = (node, leaves) => {
+var helper = function(node, res) {
   if (!node) {
-    return null;
+    return -1;
   }
-  if (!node.left && !node.right) {
-    leaves.push(node.val);
-    return null;
+  let depth = 1 + Math.max(helper(node.left, res), helper(node.right, res));
+  if (!res[depth]) {
+      res[depth] = [];
   }
-  node.left = remove(node.left, leaves);
-  node.right = remove(node.right, leaves);
-
-  return node;
+  res[depth].push(node.val);
+  return depth;
 }
