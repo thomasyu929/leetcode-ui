@@ -8,6 +8,7 @@
 // var missingNumber = function(nums) {
 //   let res = 0;
 //   for (let i = 0; i < nums.length; ++i) {
+    // same number will became 0 by ^ opreation
 //     res ^= nums[i] ^ (i + 1);
 //   }
 
