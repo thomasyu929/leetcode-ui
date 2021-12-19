@@ -1,0 +1,23 @@
+/**
+ * @param {number} n
+ * @param {number[][]} trust
+ * @return {number}
+ */
+
+// https://leetcode-cn.com/problems/find-the-town-judge/
+
+var findJudge = function(n, trust) {
+  let m = new Array(n+1).fill().map(() => [0, 0]);
+  for (let i = 0; i < trust.length; ++i) {
+    m[trust[i][1]][1] += 1;
+    m[trust[i][0]][0] += 1;
+  }
+
+  for (let i = 1; i <= n; ++i) {
+    if (m[i][0] === 0 && m[i][1] === n - 1) {
+      return i;
+    }
+  }
+
+  return -1;
+};
