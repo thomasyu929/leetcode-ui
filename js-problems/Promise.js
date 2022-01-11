@@ -266,6 +266,18 @@ _Promise.prototype.catch = function(onRejected) {
   this.then(null, onRejected);
 }
 
+// Promise.prototype.finally
+_Promise.prototype.finally = function(fn) {
+  return this.then(function(value) {
+    return _Promise.resolve(fn()).then(function() {
+      return value;
+    })
+  }, function(error) {
+    return _Promise.resolve(fn()).then(function() {
+      throw error;
+    })
+  })
+}
 
 /**
  * test suite:
