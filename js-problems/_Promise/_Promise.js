@@ -112,6 +112,177 @@ class _Promise {
 
     return promise2;
   }
+
+  /**
+   * _Promise.resolve
+   * @param {any} value parse to Promise.
+   * @returns _Promise
+   */
+  static resolve(value) {
+    if (value instanceof _Promise) {
+      return value;
+    }
+      
+    return new _Promise((resolve) => {
+      resolve(value);
+    })
+  }
+
+  /**
+   * _Promise.reject
+   * @param {any} reason of reject
+   * @returns _Promise
+   */
+  static reject(reason) {
+    return new _Promise((resolve, reject) => {
+      reject(reason);
+    })
+  }
+
+  /**
+   * _Promise.prototype.catch
+   * same as invoke .then(undefined || null, rejection)
+   */
+  catch(onRejected) {
+    return this.then(undefined, onRejected);
+  }
+
+  /**
+   * _Promise.prototype.finally
+   * call function whatever fulfilled or rejected
+   */
+  finally(callback) {
+    return this.then(callback, callback);
+  }
+
+  /**
+   * _Promise.all
+   * @param {iterable} promises accept Array
+   * @returns
+   */
+  static all(promises) {
+    return new _Promise((resolve, reject) => {
+      if (Array.isArray(promises)) {
+        let result = [];
+        let count = 0;
+
+        if (promises.length === 0) {
+          return resolve(promises);
+        }
+
+        promises.forEach((item, i) => {
+          _Promise.resolve(item).then(
+            value => {
+              count++;
+              result[i] = value;
+
+              count === promises.length && resolve(result);
+            },
+            reason => {
+              reject(reason);
+            }
+          )
+        })
+      }
+      else {
+        return reject(new TypeError('Argument is not iterable'));
+      }
+    })
+  }
+
+  /**
+   * _Promise.allSettled
+   * @param {iterable} promises accept Array
+   * @returns
+   */
+  static allSettled(promises) {
+    return _Promise((resolve, reject) => {
+      if (Array.isArray(promises)) {
+        let res = [];
+        let count = 0;
+
+        if (promises.length === 0) {
+          return resolve(promises);
+        }
+
+        promises.forEach((item, i) => {
+          _Promise.resolve(item).then(
+            value => {
+              count++;
+              res[i] = { status: 'fulfilled', value };
+
+              count === promises.length && resolve(res);
+            },
+            reason => {
+              count++;
+              res[i] = { status: 'rejected', reason };
+
+              count === promises.length && resolve(res);
+            }
+          )
+        })
+      }
+      else {
+        return reject(new TypeError('Argument is not iterable'));
+      }
+    })
+  }
+
+  /**
+   * _Promise.any
+   * @param {iterable} promises accept Array
+   * @returns
+   */
+  static any(promises) {
+    return _Promise((resolve, reject) => {
+      if (Array.isArray(promises)) {
+        let errors = [];
+        let count = 0;
+
+        if (promises.length === 0) {
+          // AggregateError is experimental. use to integrate errors;
+          return reject(new AggregateError('All promises were rejected'));
+        }
+
+        promises.forEach((item) => {
+          _Promise.resolve(item).then(
+            value => {
+              resolve(value);
+            },
+            reason => {
+              count++;
+              errors.push(reason);
+
+              count === promises.length && resolve(new AggregateError(errors));
+            }
+          )
+        })
+      }
+      else {
+        return reject(new TypeError('Argument is not iterable'));
+      }
+    })
+  }
+
+  /**
+   * _Promise.race
+   * @param {iterable} promises accept Array
+   * @returns
+   */
+  static race(promises) {
+    return new _Promise((resolve, reject) => {
+      if (Array.isArray(promises)) {
+        if (promises.length > 0) {
+          promises.forEach((item) => {
+            _Promise.resolve(item).then(resolve, reject);
+          })
+        }
+      }
+      else {
+        return reject(new TypeError('Argument is not iterable'));
+      }
+    })
+  }
 }
 
 // Declare constant which used for class _Promise
@@ -173,6 +344,7 @@ function resolvePromise(promise, x, resolve, reject) {
   }
 }
 
+// test _Promise if follow Promise/A+ spec
 _Promise.deferred = function() {
   let res = {};
   res.promise = new _Promise((resolve, reject) => {
@@ -184,23 +356,3 @@ _Promise.deferred = function() {
 }
 
 module.exports = _Promise;
-
-
-//
-/**
- * Promise.resolve()
- * @params 
- */
-myPromise.resolve = function (value) {
-  if (value instanceof myPromise) {
-      return value;
-  } else if (value instanceof Object && 'then' in value) {
-    return new myPromise((resolve, reject) => {
-        value.then(resolve, reject);
-    })
-  }
-    
-  return new myPromise((resolve) => {
-        resolve(value)
-  })
-}
