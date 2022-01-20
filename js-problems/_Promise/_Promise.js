@@ -84,6 +84,9 @@ class _Promise {
         })
       }
       else if (this.status === _Promise.FULFILLED) {
+        // can execute asynchronously by using 'macro-task' / 'micro-task' mechanism
+        // such as 'setTimeout', 'setImmediate' / 'MutationObserver', 'process.nextTick'
+        // 当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次事件循环中，微任务永远在宏任务之前执行
         setTimeout(() => {
           try {
             const x = onFulfilled(this.value);
@@ -181,3 +184,23 @@ _Promise.deferred = function() {
 }
 
 module.exports = _Promise;
+
+
+//
+/**
+ * Promise.resolve()
+ * @params 
+ */
+myPromise.resolve = function (value) {
+  if (value instanceof myPromise) {
+      return value;
+  } else if (value instanceof Object && 'then' in value) {
+    return new myPromise((resolve, reject) => {
+        value.then(resolve, reject);
+    })
+  }
+    
+  return new myPromise((resolve) => {
+        resolve(value)
+  })
+}
