@@ -15,3 +15,10 @@ var detectCapitalUse = function(word) {
 
   return uppers === 0 || uppers === word.length || (word[0].charCodeAt() < 97 && uppers === 1);
 };
+
+var detectCapitalUse = function(word) {
+  let cap = word[0].toUpperCase();
+  
+  return word === word.toUpperCase() || word === word.toLowerCase() || (cap === word[0] && word.slice(1).toLowerCase() === word.slice(1));
+};
+
