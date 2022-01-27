@@ -50,6 +50,7 @@ class _Promise {
     }
   }
 
+  // then
   then(onFulfilled, onRejected) {
     // onFulfilled / onRejected may not a function, in this case need to wrap them to a function
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
@@ -112,6 +113,8 @@ class _Promise {
 
     return promise2;
   }
+
+  // Related Promise methods
 
   /**
    * _Promise.resolve
